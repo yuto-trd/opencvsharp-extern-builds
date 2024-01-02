@@ -146,4 +146,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: libOpenCvSharpExtern.so
-          path: ${GITHUB_WORKSPACE}/opencvsharp/nuget/libOpenCvSharpExtern.so
+          path: ${{ github.workspace }}/opencvsharp/nuget/libOpenCvSharpExtern.so
