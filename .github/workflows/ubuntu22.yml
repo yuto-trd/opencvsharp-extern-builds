@@ -36,8 +36,7 @@ jobs:
             apt-transport-https \
             software-properties-common \
             ca-certificates \
-            g++ \
-            make \
+            build-essential \
             cmake \
             libtbb-dev \
             libatlas-base-dev \
@@ -45,7 +44,7 @@ jobs:
             libavcodec-dev \
             libavformat-dev \
             libswscale-dev \
-            libdc1394-22-dev \
+            libdc1394-dev \
             libxine2-dev \
             libv4l-dev \
             libtheora-dev \
@@ -53,9 +52,8 @@ jobs:
             libxvidcore-dev \
             libopencore-amrnb-dev \
             libopencore-amrwb-dev \
-            libavresample-dev \
             x264 \
-            libtesseract-dev 
+            libtesseract-dev
 
       - name: Cache OpenCV
         id: opencv-cache
