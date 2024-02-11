@@ -51,11 +51,15 @@ jobs:
 
       - if: ${{ github.event_name == 'schedule' || inputs.createRelease || inputs.dryRun }}
         name: Check release
-        continue-on-error: true
+        id: check_release
         shell: pwsh
         run: |
           gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/indigo-san/opencvsharp-extern-builds/releases/$OPENCVSHARP_REF
-          echo "ALREADY_RELEASED=$?" >> $GITHUB_ENV
+          echo "ALREADY_RELEASED=True" >> $GITHUB_ENV
+
+      - if: ${{ steps.check_release.outcome == 'failure' }}
+        run: |
+          echo "ALREADY_RELEASED=False" >> $GITHUB_ENV
 
       - if: ${{ github.event_name == 'schedule' && env.ALREADY_RELEASED == 'True' }}
         name: Cancel workflow
