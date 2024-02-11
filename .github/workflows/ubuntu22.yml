@@ -26,6 +26,7 @@ on:
 env:
   DEBIAN_FRONTEND: noninteractive
   OPENCV_CACHE_VERSION: 1
+  GH_TOKEN: ${{ github.token }}
 
 jobs:
   build:
