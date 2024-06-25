@@ -9,7 +9,11 @@ on:
         type: string
       openCvVersion:
         required: true
-        default: '4.9.0'
+        default: '4.10.0'
+        type: string
+      releaseTag:
+        required: true
+        default: '4.10.0'
         type: string
       createRelease:
         required: true
@@ -38,6 +42,7 @@ jobs:
         run: |
           echo "OPENCV_VERSION=${{ inputs.openCvVersion }}" >> $GITHUB_ENV
           echo "OPENCVSHARP_REF=${{ inputs.openCvSharpRef }}" >> $GITHUB_ENV
+          echo "RELEASE_TAG=${{ inputs.releaseTag }}" >> $GITHUB_ENV
 
       - if: ${{ github.event_name == 'schedule' }}
         name: Set environment
@@ -48,6 +53,7 @@ jobs:
           $OPENCV_VERSION = [System.String]::Join('.', [System.Linq.Enumerable]::Take($TAG.Split('.'), 3))
           "OPENCV_VERSION=$OPENCV_VERSION" | Out-File -FilePath $env:GITHUB_ENV -Append
           "OPENCVSHARP_REF=$TAG" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "RELEASE_TAG=$TAG" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - if: ${{ github.event_name == 'schedule' || inputs.createRelease || inputs.dryRun }}
         name: Check release
@@ -201,6 +207,6 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: ${{ github.workspace }}/opencvsharp/nuget/libOpenCvSharpExtern.so
-          tag: ${{ env.OPENCVSHARP_REF }}
+          tag: ${{ env.RELEASE_TAG }}
           draft: false
           makeLatest: true
