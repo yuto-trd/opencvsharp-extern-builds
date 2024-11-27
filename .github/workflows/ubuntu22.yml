@@ -60,7 +60,7 @@ jobs:
         id: check_release
         continue-on-error: true
         run: |
-          gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/indigo-san/opencvsharp-extern-builds/releases/tags/$OPENCVSHARP_REF
+          gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/yuto-trd/opencvsharp-extern-builds/releases/tags/$OPENCVSHARP_REF
           echo "ALREADY_RELEASED=True" >> $GITHUB_ENV
 
       - name: Show environment
