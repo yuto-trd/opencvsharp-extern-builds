@@ -197,10 +197,63 @@ jobs:
           gcc -I./ -L./ test.c -o test -lOpenCvSharpExtern
           LD_LIBRARY_PATH=. ./test
 
+      - name: Copy deps
+        run: |
+          SO_FILE=${GITHUB_WORKSPACE}/opencvsharp/nuget/libOpenCvSharpExtern.so
+          OUTPUT_DIR=${GITHUB_WORKSPACE}/opencvsharp/so_dependencies
+
+          # 出力ディレクトリの作成
+          mkdir -p "$OUTPUT_DIR"
+
+          # コピー済みのライブラリを記録するための連想配列（bash 4以降が必要）
+          declare -A COPIED_LIBS
+
+          # 再帰的に依存ライブラリをコピーする関数
+          copy_dependency() {
+              local file=$1
+
+              # ファイルが存在しない場合はスキップ
+              if [ -z "$file" ] || [ ! -f "$file" ]; then
+                  return
+              fi
+
+              # 既にコピー済みなら処理しない
+              if [[ -n "${COPIED_LIBS[$file]}" ]]; then
+                  return
+              fi
+
+              # コピー済みとしてマーク
+              COPIED_LIBS["$file"]=1
+
+              echo "Copying $file..."
+              cp "$file" "$OUTPUT_DIR"
+
+              # このライブラリの依存関係を取得（パスが'/'から始まるものを対象）
+              local deps
+              deps=$(ldd "$file" 2>/dev/null | awk '{print $3}' | grep '^/')
+
+              for dep in $deps; do
+                  copy_dependency "$dep"
+              done
+          }
+
+          # 初回の.soファイルから再帰的に依存ライブラリをコピー
+          copy_dependency "$SO_FILE"
+
+          # 最後に収集したライブラリをzip化
+          echo "Creating zip file so_dependencies.zip..."
+          zip -r ${GITHUB_WORKSPACE}/opencvsharp/so_dependencies.zip "$OUTPUT_DIR"
+
       - uses: actions/upload-artifact@v3
         with:
           name: libOpenCvSharpExtern.so
           path: ${{ github.workspace }}/opencvsharp/nuget/libOpenCvSharpExtern.so
+
+      
+      - uses: actions/upload-artifact@v3
+        with:
+          name: so_dependencies.zip
+          path: ${{ github.workspace }}/opencvsharp/so_dependencies.zip
 
       - if: ${{ env.ALREADY_RELEASED == 'False' && (github.event_name == 'schedule' || inputs.createRelease) }}
         name: Release
