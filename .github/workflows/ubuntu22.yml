@@ -244,13 +244,13 @@ jobs:
           echo "Creating zip file so_dependencies.zip..."
           zip -r ${GITHUB_WORKSPACE}/opencvsharp/so_dependencies.zip "$OUTPUT_DIR"
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: libOpenCvSharpExtern.so
           path: ${{ github.workspace }}/opencvsharp/nuget/libOpenCvSharpExtern.so
 
       
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: so_dependencies.zip
           path: ${{ github.workspace }}/opencvsharp/so_dependencies.zip
